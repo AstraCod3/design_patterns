@@ -23,9 +23,9 @@
  * @code
  *    LOCK ACTIVATED HERE -----------------------┐
  *                                               v
- * ns_singleton::singleton<myclass>::get_instance()->increment();
- *                                                              ^
- *    LOCK RELEASED HERE ---------------------------------------┘
+ * ns_singleton::singleton<myclass>::get_instance()->do_something();
+ *                                                                 ^
+ *    LOCK RELEASED HERE ------------------------------------------┘
  * @endcode
  */
 
