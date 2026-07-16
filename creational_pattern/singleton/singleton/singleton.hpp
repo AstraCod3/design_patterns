@@ -1,7 +1,5 @@
 /**
  * @file singleton.hpp
- * @brief 
- * @details
  * @author AstraCod3
  * @date July 15, 2026
  * @version 1.0.0
