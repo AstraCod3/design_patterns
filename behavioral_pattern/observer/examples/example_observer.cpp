@@ -1,3 +1,34 @@
+/**
+ * @file singleton.hpp
+ * @author AstraCod3
+ * @date July 15, 2026
+ * @version 1.0.0
+ *
+ * @details This header provides a generic, thread-safe Singleton wrapper using 
+ * an advanced RAII-based Proxy pattern combined with dynamic Heap allocation via 
+ * std::shared_ptr. It ensures complete isolation of the underlying resource while 
+ * abstracting all synchronization mechanics away from the managed class.
+ * 
+ * @note **Key Architectural Highlights:**
+ * @note 1. **Zero-Invasive Resource Management**: The managed class `T` requires 
+ *          no internal mutexes or thread-safety logic. It can remain pure and single-threaded.
+ * @note 2. **Expression-Scoped RAII Locking**: Mutual exclusion is tied directly to the 
+ *          evaluation scope of a single C++ expression. The lock is acquired when 
+ *          `getInstance()` is called and automatically released at the trailing semicolon `;`.
+ * @note 3. **Modern Heap Lifecycle**: Leverages `std::shared_ptr` to achieve automated 
+ *          and leak-free memory reclamation from the Heap upon application termination.
+ * @note 4. **Double-Checked Locking Optimization**: Maximizes concurrent performance 
+ *          by preventing core thread contention once the shared resource has been initialized.
+ * 
+ * @code
+ *    LOCK ACTIVATED HERE -----------------------┐
+ *                                               v
+ * ns_singleton::singleton<myclass>::get_instance()->do_something();
+ *                                                                 ^
+ *    LOCK RELEASED HERE ------------------------------------------┘
+ * @endcode
+ */
+
 #include "../observer/observer.hpp"
 
 int Observer::static_number_ = 0;
