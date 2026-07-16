@@ -20,24 +20,25 @@ class myclass {
         void increment() { 
             ++idata; 
         }
-        void display_data() { std::cout << " idata : " << idata << "\n"; }
-        int getiData() { return idata; }
+        int get_idata() { return idata; }
     private:
         int idata;
         std::mutex mtx_idata;
 };
 
+const int NUM_THREADS = 4000;
+const int NUM_CALL_INCREMENT = 10000;
+
 void thread_func();
 void thread_func() {
-    for( int cnt = 0; cnt < 1000; cnt++) {
-        ns_singleton::singleton<myclass>::getInstance()->increment();
+    for( int cnt = 0; cnt < NUM_CALL_INCREMENT; cnt++) {
+        ns_singleton::singleton<myclass>::get_instance()->increment();
     }
 }
 
 int main() {
     std::cout << "start singleton ...\n";
     std::vector<std::thread> vth;
-    const int NUM_THREADS = 40;
     for( int i = 0; i < NUM_THREADS; i++) {
         std::thread thr_increment( thread_func );
         vth.emplace_back( std::move(thr_increment) );
@@ -49,7 +50,10 @@ int main() {
             th.join();
     }
 
-    ns_singleton::singleton<myclass>::getInstance()->display_data(); 
+    int result = ns_singleton::singleton<myclass>::get_instance()->get_idata(); 
+    std::cout << " expected : " << ( NUM_THREADS * NUM_CALL_INCREMENT) << "\n";
+    std::cout << " result   : " << result << "\n";
+
     std::cout << "... done!\n";
     return EXIT_SUCCESS;
 }
