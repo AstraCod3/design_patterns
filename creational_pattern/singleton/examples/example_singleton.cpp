@@ -5,28 +5,18 @@
  * @author AstraCod3
  * @date July 15, 2026
  * @version 1.0.0
- *
- * @note
- * @warning
- * @see 
- * @todo
- * @deprecated
- * @def
  */
 
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <mutex>
-#include <memory>
-#include <stdexcept>      // std::logic_error
 
 #include "../singleton/singleton.hpp"
 
 class myclass {
     public:
-        myclass() : idata(0) { /*std::cout << " Costructor myclass address idata : "<< std::hex << &idata << std::dec << "\n";*/ }
-        virtual ~myclass() { /*std::cout << " Destructor my class\n";*/ }
+        myclass() : idata(0) { }
+        virtual ~myclass() { }
         void increment() { 
             ++idata; 
         }

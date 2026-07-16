@@ -116,7 +116,8 @@ namespace ns_singleton {
              * triggering an automatic unlock of the underlying mutex.
              */
             ~locked_proxy() = default;
-        };
+
+        }; // class locked_proxy
 
         /**
          * @brief Returns a safe Proxy object to access the Singleton instance.
@@ -125,181 +126,23 @@ namespace ns_singleton {
          * @code
          *    LOCK ACTIVATED HERE ----------------------┐
          *                                              v
-         * ns_singleton::singleton<myclass>::getInstance()->increment();
-         *                                                             ^
-         *    LOCK RELEASED HERE --------------------------------------┘
+         * ns_singleton::singleton<myclass>::getInstance()->do_somethig();
+         *                                                               ^
+         *    LOCK RELEASED HERE ----------------------------------------┘
          * @endcode
          * 
-         * @return LockedProxy A temporary RAII object holding the active mutex lock.
+         * @return locked_proxy A temporary RAII object holding the active mutex lock.
          */
         [[nodiscard]] static locked_proxy getInstance() {
             return locked_proxy (mmtx, minstance);
         }
-    };
+
+    }; // class singleton
 
     // Initialization of template static members
     template<typename T> std::mutex singleton<T>::mmtx;
     template<typename T> T singleton<T>::minstance;
 
-} /* namespace n_singleton */
-
-//namespace ns_singleton {
-//    /* unique synchro for different type */
-//    template<typename T>
-//    class synchro {
-//        public:
-//            synchro() { }
-//            ~synchro() { }
-//            std::mutex mtx;
-//    };
-//
-//    template<typename T>
-//    class singleton {
-//        private:
-//            singleton() {
-//                //std::unique_lock<std::mutex> lock(mtx);
-//                std::cout << "\t Costructor singleton()\n";
-//            }
-//            virtual ~singleton() {
-//                //std::unique_lock<std::mutex> lock(mtx);
-//                std::cout << "\t Destructor ~singleton()\n";
-//            }
-//            //  Deleted copy constructor
-//            singleton( const singleton &other ) = delete;
-//            //  Deleted copy assignment
-//            singleton& operator = ( const singleton&) = delete;
-//            //  Deleted move constructor
-//            singleton( singleton &&other ) = delete;
-//            //  Deleted move assignment
-//            singleton& operator = ( singleton&& ) = delete;
-//            static synchro<T> sync;
-//
-//        public:
-//            static void unlockInstance () { sync.mtx.unlock(); }
-//            static void lockInstance () { sync.mtx.lock(); }
-//            static T& getInstance() {
-//                static T instance;
-//                return instance;
-//            }
-//    };
-//    template<typename T> synchro<T> singleton<T>::sync;
-//} /* namespace n_singleton */
-
-
-// namespace ns_singleton {
-//     template<typename T>
-// 	class singleton {
-// 	private:
-// 		singleton() { }
-// 		
-// 		//virtual ~singleton() { delete myInstancePtr; }
-// 		virtual ~singleton() {  }
-// 		
-//         singleton( const singleton &other ) = delete;        //  Deleted copy constructor
-// 	
-//         singleton& operator = ( const singleton&) = delete;  //  Deleted copy assignment
-// 
-//         singleton( singleton &&other ) = delete;             //  Deleted move constructor
-// 
-//         singleton& operator = ( singleton&& ) = delete;      //  Deleted move assignment
-// 
-// 		static std::mutex mtx;
-//         static T myInstance;
-// //      static T* myInstancePtr;
-// //      static std::unique_ptr<T> myInstancePtr; // Using unique_ptr for automatic cleanup  
-//     public:
-//             
-// //      static T* getInstancePtr() {
-// //          std::lock_guard<std::mutex> lock(mtx); 
-// //          if( !myInstancePtr )
-// //             myInstancePtr = new T();
-// //          return myInstancePtr;
-// //      }
-// 
-// //      static void delInstace() { 
-// //           if( myInstancePtr )
-// //               delete myInstancePtr; 
-// //       }
-// 
-//         static void lockInstance() { mtx.lock(); }
-//         static void unlockInstance() { mtx.unlock(); }
-// //        static T& getInstance() { return myInstance; }
-// //        static T& getInstance() {
-// //            static T mylocalInstance; 
-// //            return mylocalInstance;
-// //        }
-// 
-//           static T& getInstance() {
-//               static T mylocalInstance; 
-//               return mylocalInstance;
-//           }
-// 
-//     };
-// 
-// //  template<typename T> std::unique_ptr<T> singleton<T>::myInstancePtr = nullptr;
-// //  template<typename T> T* singleton<T>::myInstancePtr = nullptr;
-//     template<typename T> T singleton<T>::myInstance;
-//     template<typename T> std::mutex singleton<T>::mtx;
-// 
-// } /* namespace n_singleton */
-
-
-
-// 
-// from TalkpAI
-// 
-// #include <iostream> 
-// #include <memory> 
-// #include <mutex> 
-// 
-// class Singleton { 
-// 	private: 
-// 		static std::unique_ptr<Singleton> instance; 
-// 		static std::once_flag onceFlag; 
-// 		Singleton() { std::cout << "Singleton created\n"; } 
-// 	public: 
-// 		Singleton(const Singleton&) = delete;
-// 		Singleton& operator=(const Singleton&) = delete; 
-// 		static Singleton* getInstance() { 
-// 			std::call_once(onceFlag, []() { 
-// 					instance.reset(new Singleton()); 
-// 					}); 
-// 			return instance.get(); 
-// 		} 
-// 		void doSomething() { std::cout << "Doing something!\n"; } 
-// };
-// std::unique_ptr<Singleton> Singleton::instance; 
-// std::once_flag Singleton::onceFlag; 
-// 
-// int main() { 
-// 	Singleton* s1 = Singleton::getInstance(); 
-// 	s1->doSomething(); 
-// 	return 0; 
-// }
-// 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} // namespace n_singleton 
 
 #endif // SINGLETON_H
