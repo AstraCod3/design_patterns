@@ -6,180 +6,81 @@
  *
  * Description : 
  * 
- * Observer Design Pattern
+ * observer Design Pattern
  * 
  * Intent: Lets you define a subscription mechanism to notify multiple objects
  * about any events that happen to the object they're observing.
  * 
  * Note that there's a lot of different terms with similar meaning associated
- * with this pattern. Just remember that the Subject is also called the
- * Publisher and the Observer is often called the Subscriber and vice versa.
+ * with this pattern. Just remember that the subject is also called the
+ * Publisher and the observer is often called the Subscriber and vice versa.
  * Also the verbs "observe", "listen" or "track" usually mean the same thing.
  *
  */
 
-#include <iostream>
-#include <list>
-#include <string>
 
 /**
  * @namespace ns_observer
- * @brief
- * @details
+ * @brief Container for the Observer Design Pattern interfaces and implementations.
+ *
+ * This namespace isolates the observer and subject abstract contracts to prevent
+ * naming collisions with other subsystems in the application architecture.
  */
 namespace ns_observer {
 
     /**
-     * @class IObserver
-     * @brief
-     * @details
+     * @class observer_base
+     * @brief Abstract base class representing the Observer interface.
+     * 
+     * Objects implementing this interface can register with a subject to receive updates.
      */
-    class IObserver {
+    class observer_base {
+
         public:
-            virtual ~IObserver(){};
-            virtual void Update(const std::string &message_from_subject) = 0;
+
+        /**
+         * @brief Virtual destructor.
+         */
+        virtual ~observer_base() {}
+
+        /**
+         * @brief Receive update notifications from the subject.
+         * @param message_from_subject The state message sent by the subject.
+         */
+        virtual void update(const std::string &message_from_subject) = 0;
     };
 
     /**
-     * @class ISubject
-     * @brief
-     * @details
+     * @class subject_base
+     * @brief Abstract base class representing the Subject interface.
+     * 
+     * Defines the contract for managing subscriptions and notifying observers.
      */
-    class ISubject {
-        public:
-            virtual ~ISubject(){};
-            virtual void Attach(IObserver *observer) = 0;
-            virtual void Detach(IObserver *observer) = 0;
-            virtual void Notify() = 0;
-    };
-    
-    /**
-     * @class ISubject
-     * @brief
-     * @details
-     * The Subject owns some important state and notifies observers when the state
-     * changes.
-     */
-    class Subject : public ISubject {
-        public:
-            virtual ~Subject() {
-                std::cout << "Goodbye, I was the Subject.\n";
-        }
-
-        /**
-         * @brief The subscription management methods.
-         */
-        void Attach(IObserver *observer) override {
-            list_observer_.push_back(observer);
-        }
-
-        /**
-         * @brief The un-subscription management methods.
-         */
-        void Detach(IObserver *observer) override {
-            list_observer_.remove(observer);
-        }
-
-        /**
-         * @brief
-         */
-        void Notify() override {
-            std::list<IObserver *>::iterator iterator = list_observer_.begin();
-            HowManyObserver();
-            while (iterator != list_observer_.end()) {
-                // forse è preferibile che ogni operazioni di update
-                // deve essere un thread, in modo tale che ogni observer
-                // all'interno di update puo' prendere tutto il tempo che desidera
-                // altrimenti gli observer successivi ricevono 
-                // la notifica in ritardo
-                (*iterator)->Update(message_);
-                ++iterator;
-            }
-        }
-
-        /**
-         * @brief
-         */
-        void CreateMessage(std::string message = "Empty") {
-            this->message_ = message;
-            Notify();
-        }
-
-        /**
-         * @brief
-         */
-        void HowManyObserver() {
-            std::cout << "There are " << list_observer_.size() << " observers in the list.\n";
-        }
-
-        /**
-         * Usually, the subscription logic is only a fraction of what a Subject can
-         * really do. Subjects commonly hold some important business logic, that
-         * triggers a notification method whenever something important is about to
-         * happen (or after it).
-         */
-        void SomeBusinessLogic() {
-            this->message_ = "change message message";
-            Notify();
-            std::cout << "I'm about to do some thing important\n";
-        }
-
-        private:
-
-            /**
-             * @brief
-             */
-            std::list<IObserver *> list_observer_;
-
-            /**
-             * @brief
-             */
-            std::string message_;
-    };
-
-    class Observer : public IObserver {
+    class subject_base {
 
         public:
 
         /**
-         * @brief
+         * @brief Virtual destructor.
          */
-     //Observer(Subject &subject) : subject_(subject) {
-        Observer(ISubject &subject) : subject_(subject) {
-            this->subject_.Attach(this);
-            std::cout << "Hi, I'm the Observer \"" << ++Observer::static_number_ << "\".\n";
-            this->number_ = Observer::static_number_;
-        }
+        virtual ~subject_base() {}
 
         /**
-         * @brief
+         * @brief Subscribe an observer to the subject.
+         * @param observer Pointer to the observer to attach.
          */
-      virtual ~Observer() {
-        std::cout << "Goodbye, I was the Observer \"" << this->number_ << "\".\n";
-      }
+        virtual void attach(observer_base *observer) = 0;
 
-      void Update(const std::string &message_from_subject) override {
-        message_from_subject_ = message_from_subject;
-        //PrintInfo();
-        std::cout << "Observer \"" << this->number_ << "\": a new message is available --> " << this->message_from_subject_ << "\n";
-      }
-      void RemoveMeFromTheList() {
-        subject_.Detach(this);
-        std::cout << "Observer \"" << number_ << "\" removed from the list.\n";
-      }
-    //  void PrintInfo() {
-    //    std::cout << "Observer \"" << this->number_ << "\": a new message is available --> " << this->message_from_subject_ << "\n";
-    //  }
+        /**
+         * @brief Unsubscribe an observer from the subject.
+         * @param observer Pointer to the observer to detach.
+         */
+        virtual void detach(observer_base *observer) = 0;
 
-     private:
-      std::string message_from_subject_;
-      //Subject &subject_;
-     // meglio il padre ISubject per essere
-     // astratti altrimenti si deve spcificare la 
-     // classe figlia
-      ISubject &subject_;
-      static int static_number_;
-      int number_;
+        /**
+         * @brief Broadcast an update event to all registered observers.
+         */
+        virtual void notify() = 0;
     };
 
-    } // ns_observer
+} // ns_observer

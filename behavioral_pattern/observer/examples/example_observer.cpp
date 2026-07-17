@@ -29,39 +29,146 @@
  * @endcode
  */
 
+
+#include <iostream>
+#include <list>
+#include <string>
+#include <future>
+#include <chrono>
+
 #include "../observer/observer.hpp"
 
-int Observer::static_number_ = 0;
+/**
+ * @namespace ns_example
+ * @brief Domain-specific namespace containing thread-safe implementations.
+ */
+namespace ns_example {
+
+    /**
+     * @brief Global mutex dedicated purely to thread-safe console output operations.
+     */
+    static std::mutex io_mutex;
+
+    /**
+     * @class vehicle
+     * @brief Thread-safe concrete implementation of a Subject.
+     */
+    class vehicle : public ns_observer::subject_base {
+
+        private:
+
+        std::list<ns_observer::observer_base*> list_observer_;
+        std::string message_;
+        int speed_ = 0;
+
+        /** @brief Mutex protecting access to the internal observers list and vehicle state. */
+        mutable std::mutex list_mutex;
+
+        public:
+
+        virtual ~vehicle() {
+            std::lock_guard<std::mutex> io_lock(io_mutex);
+            std::cout << "[vehicle] Destroyed.\n";
+        }
+
+        /**
+         * @brief Adds an observer to the list safely under a lock guard.
+         */
+        void attach(ns_observer::observer_base *observer) override {
+            std::lock_guard<std::mutex> lock(list_mutex);
+            list_observer_.push_back(observer);
+        }
+
+        /**
+         * @brief Removes an observer from the list safely under a lock guard.
+         */
+        void detach(ns_observer::observer_base *observer) override {
+            std::lock_guard<std::mutex> lock(list_mutex);
+            list_observer_.remove(observer);
+        }
+
+        /**
+         * @brief Asynchronously broadcasts state updates while ensuring structure thread safety.
+         */
+        void notify() override {
+            std::vector<std::future<void>> async_tasks;
+            std::string current_msg;
+            std::vector<ns_observer::observer_base*> observers_snapshot;
+
+            // Scope block to minimize lock contention: we quickly copy the pointer list
+            {
+                std::lock_guard<std::mutex> lock(list_mutex);
+                current_msg = this->message_;
+                observers_snapshot.assign(list_observer_.begin(), list_observer_.end());
+            }
+            // The list_mutex is released here, so attach/detach won't block during thread execution
+
+            for (auto observer : observers_snapshot) {
+                async_tasks.push_back(std::async(std::launch::async, [observer, current_msg]() {
+                    observer->update(current_msg);
+                }));
+            }
+            // Explicitly out of scope: tasks join sequentially here
+        }
+
+        void accelerate(int amount) {
+            {
+                std::lock_guard<std::mutex> lock(list_mutex);
+                speed_ += amount;
+                message_ = "Vehicle speed changed to " + std::to_string(speed_) + " km/h";
+            }
+
+            {
+                std::lock_guard<std::mutex> io_lock(io_mutex);
+                std::cout << "\n[vehicle] Event triggered!\n";
+            }
+            notify();
+        }
+    };
+
+    /**
+     * @class dashboard_display
+     * @brief Concrete Observer using io_mutex to eliminate stdout data races.
+     */
+    class dashboard_display : public ns_observer::observer_base {
+        public:
+        void update(const std::string &message_from_subject) override {
+            std::lock_guard<std::mutex> io_lock(io_mutex);
+            std::cout << "[dashboard_display UI] Instantly received: " << message_from_subject << "\n";
+        }
+    };
+
+    /**
+     * @class data_logger
+     * @brief Concrete Observer utilizing io_mutex for synchronized disk-emulated output.
+     */
+    class data_logger : public ns_observer::observer_base {
+        public:
+        void update(const std::string &message_from_subject) override {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::lock_guard<std::mutex> io_lock(io_mutex);
+            std::cout << "[data_logger] Safely logged to disk: " << message_from_subject << "\n";
+        }
+    };
+
+    int run_simulation() ;
+    int run_simulation() {
+        vehicle car;
+        dashboard_display ui;
+        data_logger logger;
+
+        car.attach(&ui);
+        car.attach(&logger);
+
+        car.accelerate(40);
+        car.accelerate(70);
+
+        return 0;
+    }
+
+} // namespace ns_example
 
 int main() {
-  Subject *subject = new Subject;
-  Observer *observer1 = new Observer(*subject);
-  Observer *observer2 = new Observer(*subject);
-  Observer *observer3 = new Observer(*subject);
-  Observer *observer4;
-  Observer *observer5;
-
-  subject->CreateMessage("Hello World! :D");
-  observer3->RemoveMeFromTheList();
-
-  subject->CreateMessage("The weather is hot today! :p");
-  observer4 = new Observer(*subject);
-
-  observer2->RemoveMeFromTheList();
-  observer5 = new Observer(*subject);
-
-  subject->CreateMessage("My new car is great! ;)");
-  observer5->RemoveMeFromTheList();
-
-  observer4->RemoveMeFromTheList();
-  observer1->RemoveMeFromTheList();
-
-  delete observer5;
-  delete observer4;
-  delete observer3;
-  delete observer2;
-  delete observer1;
-  delete subject;
-
-  return 0;
+    return ns_example::run_simulation();
 }
