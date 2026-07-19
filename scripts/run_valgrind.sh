@@ -44,7 +44,7 @@ check_race_condition_helgrind() {
 }
 
 if [ ! -d "$bin_path" ]; then
-    echo " ERROR! : folder "$bin_path" is no exist run \"./test_build.sh\" before"
+    echo " ERROR! : folder "$bin_path" is no exist run \"./build.sh\" before"
     echo ""
     exit
 fi
