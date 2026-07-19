@@ -13,7 +13,6 @@
  *   Subclasses can override this method to change the class of objects that will be created.
  */
 
-
 /**
  * @namespace ns_factory_method
  * @brief
@@ -76,5 +75,66 @@ namespace ns_factory_method {
             return result;
         }
     };
+
+    /**
+     * @class concrete_product_base_1
+     * Concrete product_bases provide various implementations of the product_base interface.
+     */
+    class concrete_product_base_1 : public product_base {
+
+        public:
+
+        /**
+         * @brief
+         */
+        std::string operation() const override { return "{Result of the concrete_product_base_1}"; }
+    };
+
+    /**
+     * @class concrete_product_base_1
+     * Concrete product_bases provide various implementations of the product_base interface.
+     */
+    class concrete_product_base_2 : public product_base {
+
+        public:
+
+        /**
+         * @brief Costructor
+         */
+        std::string operation() const override { return "{Result of the concrete_product_base_2}"; }
+    };
+
+    /**
+     * @class concrete_creator_base_1
+     * Concrete creator_bases override the factory method in order to change the
+     * resulting product_base's type.
+     *
+     * Note that the signature of the method still uses the abstract product_base type,
+     * even though the concrete product_base is actually returned from the method. This
+     * way the creator_base can stay independent of concrete product_base classes.
+     */
+    class concrete_creator_base_1 : public creator_base {
+
+        public:
+
+        /**
+         * @brief
+         */
+        product_base* factory_method() const override { return new concrete_product_base_1(); }
+    };
+
+    /**
+     * @class concrete_creator_base_2
+     */
+    class concrete_creator_base_2 : public creator_base {
+
+        public:
+
+        /**
+         * @brief
+         */
+        product_base* factory_method() const override { return new concrete_product_base_2(); }
+    };
+
 
 } // ns_factory_method

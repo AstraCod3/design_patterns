@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-#include "..\creational_pattern\factory_method\factory_method.hpp"
+#include "..\creational_pattern\factory_method.hpp"
 
 /**
  * @namespace ns_example_factory_method
@@ -23,74 +23,14 @@
 namespace ns_example_factory_method {
 
     /**
-     * @class concrete_product_base_1
-     * Concrete product_bases provide various implementations of the product_base interface.
-     */
-    class concrete_product_base_1 : public product_base {
-
-        public:
-
-        /**
-         * @brief
-         */
-        std::string operation() const override { return "{Result of the concrete_product_base_1}"; }
-    };
-
-    /**
-     * @class concrete_product_base_1
-     * Concrete product_bases provide various implementations of the product_base interface.
-     */
-    class concrete_product_base_2 : public product_base {
-
-        public:
-
-        /**
-         * @brief Costructor
-         */
-        std::string operation() const override { return "{Result of the concrete_product_base_2}"; }
-    };
-
-    /**
-     * @class concrete_creator_base_1
-     * Concrete creator_bases override the factory method in order to change the
-     * resulting product_base's type.
-     *
-     * Note that the signature of the method still uses the abstract product_base type,
-     * even though the concrete product_base is actually returned from the method. This
-     * way the creator_base can stay independent of concrete product_base classes.
-     */
-    class concrete_creator_base_1 : public creator_base {
-
-        public:
-
-        /**
-         * @brief
-         */
-        product_base* factory_method() const override { return new concrete_product_base_1(); }
-    };
-
-    /**
-     * @class concrete_creator_base_2
-     */
-    class concrete_creator_base_2 : public creator_base {
-
-        public:
-
-        /**
-         * @brief
-         */
-        product_base* factory_method() const override { return new concrete_product_base_2(); }
-    };
-
-    /**
      * @brief The client code works with an instance of a concrete creator_base, albeit through its base interface.
      *         As long as the client keeps working with the creator_base via
      *         the base interface, you can pass it any creator_base's subclass.
      */
-    void client_code(const creator_base& creator_base) {
+    void client_code(const ns_factory_method::creator_base& creator_base) {
         // ...
         std::cout << "Client: I'm not aware of the creator_base's class, but it still works.\n"
-                << creator_base.Someoperation() << std::endl;
+                << creator_base.some_operation() << std::endl;
         // ...
     }
 
@@ -100,14 +40,15 @@ namespace ns_example_factory_method {
  * @brief The Application picks a creator_base's type depending on the configuration or environment.
  */
 int main() {
-    std::cout << "App: Launched with the concrete_creator_base_1.\n";
-    ns_factory_method::creator_base* creator_base = new ns_example_factory_method::concrete_creator_base_1();
+    std::cout << "-----------------------------------------\n";
+    std::cout << "Example Factory Method ...\n";
+    ns_factory_method::creator_base* creator_base = new ns_factory_method::concrete_creator_base_1();
     ns_example_factory_method::client_code(*creator_base);
 	delete creator_base;
 	
     std::cout << std::endl;
     std::cout << "App: Launched with the concrete_creator_base_2.\n";
-    ns_factory_method::creator_base* creator_base2 = new ns_example_factory_method::concrete_creator_base_2();
+    ns_factory_method::creator_base* creator_base2 = new ns_factory_method::concrete_creator_base_2();
     ns_example_factory_method::client_code(*creator_base2);
     delete creator_base2;
 

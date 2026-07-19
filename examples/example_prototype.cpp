@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../prototype/prototype.hpp"
+#include "../creational_pattern/prototype.hpp"
 
 /**
  * @namespace ns_example_prototype
@@ -180,7 +180,8 @@ namespace ns_example_prototype {
  * @brief
  */
 int main() {
-    std::cout << "\n\nstart prototype ... \n\n";
+    std::cout << "-----------------------------------------\n";
+    std::cout << "Example Prototype ...\n";
     // Each call to the "createMachine" method clones the right BasePrototype object
 
     ns_example_prototype::prototype_managerr protoManage;
@@ -225,6 +226,6 @@ int main() {
         delete myMachines[i];
 
     // delete static 
-    std::cout << "... done!\n";
+    std::cout << "...done!\n";
     return 0;
 }

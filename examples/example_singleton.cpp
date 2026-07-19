@@ -11,7 +11,7 @@
 #include <vector>
 #include <thread>
 
-#include "../singleton/singleton.hpp"
+#include "../creational_pattern/singleton.hpp"
 
 class myclass {
     public:
@@ -37,23 +37,20 @@ void thread_func() {
 }
 
 int main() {
-    std::cout << "start singleton ...\n";
+    std::cout << "-----------------------------------------\n";
+    std::cout << "Example Singleton ...\n";
     std::vector<std::thread> vth;
     for( int i = 0; i < NUM_THREADS; i++) {
         std::thread thr_increment( thread_func );
         vth.emplace_back( std::move(thr_increment) );
     }
-
-    std::cout << " num. of threads : " << vth.size() << "\n";
     for(auto & th : vth) {
         if ( th.joinable() )
             th.join();
     }
-
     int result = ns_singleton::singleton<myclass>::get_instance()->get_idata(); 
     std::cout << " expected : " << ( NUM_THREADS * NUM_CALL_INCREMENT) << "\n";
     std::cout << " result   : " << result << "\n";
-
     std::cout << "... done!\n";
     return EXIT_SUCCESS;
 }

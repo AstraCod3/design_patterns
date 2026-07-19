@@ -5,34 +5,33 @@
  * @version 1.0.0
  *
  * Description : 
- * 
+ *
  * observer Design Pattern
- * 
+ *
  * Intent: Lets you define a subscription mechanism to notify multiple objects
  * about any events that happen to the object they're observing.
- * 
- * Note that there's a lot of different terms with similar meaning associated
+ *
+ * @note Note that there's a lot of different terms with similar meaning associated
  * with this pattern. Just remember that the subject is also called the
  * Publisher and the observer is often called the Subscriber and vice versa.
  * Also the verbs "observe", "listen" or "track" usually mean the same thing.
  *
  */
 
+#include <string>
 
 /**
  * @namespace ns_observer
  * @brief Container for the Observer Design Pattern interfaces and implementations.
- *
- * This namespace isolates the observer and subject abstract contracts to prevent
- * naming collisions with other subsystems in the application architecture.
+ *        This namespace isolates the observer and subject abstract contracts to prevent
+ *          naming collisions with other subsystems in the application architecture.
  */
 namespace ns_observer {
 
     /**
      * @class observer_base
      * @brief Abstract base class representing the Observer interface.
-     * 
-     * Objects implementing this interface can register with a subject to receive updates.
+     *        Objects implementing this interface can register with a subject to receive updates.
      */
     class observer_base {
 
@@ -45,7 +44,7 @@ namespace ns_observer {
 
         /**
          * @brief Receive update notifications from the subject.
-         * @param message_from_subject The state message sent by the subject.
+         * @param message_from_subject [in] The state message sent by the subject.
          */
         virtual void update(const std::string &message_from_subject) = 0;
     };
@@ -53,27 +52,31 @@ namespace ns_observer {
     /**
      * @class subject_base
      * @brief Abstract base class representing the Subject interface.
-     * 
-     * Defines the contract for managing subscriptions and notifying observers.
+     *        Defines the contract for managing subscriptions and notifying observers.
      */
     class subject_base {
 
         public:
 
         /**
-         * @brief Virtual destructor.
+         * @brief Costructor.
          */
-        virtual ~subject_base() {}
+        subject_base() { }
+
+        /**
+         * @brief Destructor.
+         */
+        virtual ~subject_base() { }
 
         /**
          * @brief Subscribe an observer to the subject.
-         * @param observer Pointer to the observer to attach.
+         * @param observer [in] Pointer to the observer to attach.
          */
         virtual void attach(observer_base *observer) = 0;
 
         /**
          * @brief Unsubscribe an observer from the subject.
-         * @param observer Pointer to the observer to detach.
+         * @param observer [in] Pointer to the observer to detach.
          */
         virtual void detach(observer_base *observer) = 0;
 

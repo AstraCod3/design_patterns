@@ -36,7 +36,7 @@
 #include <future>
 #include <chrono>
 
-#include "../observer/observer.hpp"
+#include "../behavioral_pattern/observer.hpp"
 
 /**
  * @namespace ns_example
@@ -170,5 +170,8 @@ namespace ns_example {
 } // namespace ns_example
 
 int main() {
+    std::cout << "-----------------------------------------\n";
+    std::cout << "Example Observer ...\n";
     return ns_example::run_simulation();
+    std::cout << "...done!\n";
 }
