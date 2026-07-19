@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-#include "..\creational_pattern\factory_method.hpp"
+#include "../creational_pattern/factory_method.hpp"
 
 /**
  * @namespace ns_example_factory_method
@@ -27,6 +27,7 @@ namespace ns_example_factory_method {
      *         As long as the client keeps working with the creator_base via
      *         the base interface, you can pass it any creator_base's subclass.
      */
+    void client_code(const ns_factory_method::creator_base& creator_base) ;
     void client_code(const ns_factory_method::creator_base& creator_base) {
         // ...
         std::cout << "Client: I'm not aware of the creator_base's class, but it still works.\n"

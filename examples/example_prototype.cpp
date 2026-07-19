@@ -202,7 +202,7 @@ int main() {
     std::cout << "myMachines[0] addr: " << myMachines[0] << "\n";
     std::cout << "\n";
 
-    for (int i = 0; i < myMachines.size(); i++)
+    for (size_t i = 0; i < myMachines.size(); i++)
         myMachines[i]->brew();
     std::cout << "\n";
 
@@ -222,7 +222,7 @@ int main() {
     std::cout << "\n";
 
     // Clean up!
-    for (int i = 0; i < myMachines.size(); i++)
+    for (size_t i = 0; i < myMachines.size(); i++)
         delete myMachines[i];
 
     // delete static 

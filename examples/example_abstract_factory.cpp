@@ -34,6 +34,7 @@ namespace ns_example_abstract_factory {
     /**
      * @brief
      */
+    void client_code( const ns_abstract_factory::abstract_factory &factory ) ;
     void client_code( const ns_abstract_factory::abstract_factory &factory ) {
         const ns_abstract_factory::abstract_product_a *product_a = factory.create_product_a();
         const ns_abstract_factory::abstract_product_b *product_b = factory.create_product_b();

@@ -57,7 +57,6 @@ done
 current_path=$(pwd)
 
 
-
 if [ "$build_examples" = "on" ]; then
     mkdir -p $build_examples_path
     cd "$build_examples_path"
